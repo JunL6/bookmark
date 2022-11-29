@@ -40,9 +40,22 @@ export class AuthService {
         
         
     }
-    }
 
-    login() {
-        return "You have logged in."
+    async login(dto: AuthDto) {
+        // find the user by email
+        const user = await this.prismaService.user.findUnique({
+            where: {email: dto.email}
+        })
+        // if the user doesn't exist, throw an expection
+        if(!user) throw new ForbiddenException("User associated with this email doesn't exist.")
+        
+        // check password, if the password is incorrect, throw an expection
+        if(!await argon.verify(user.hash, dto.password)) {
+            throw new ForbiddenException("Password incorrect.");
+        }
+
+        // return 
+        delete user.hash;
+        return user;
     }
 }
