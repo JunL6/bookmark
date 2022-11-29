@@ -3,37 +3,21 @@ import { Request } from "express";
 import { AuthDto } from "src/dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { AuthService } from "./auth.service";
-import * as argon from "argon2";
 
 @Controller('auth')
 export class AuthController{
-    constructor(private prismaService: PrismaService) {
+    constructor(private authService: AuthService) {
     }
 
     @Post('signup')
-    async signup(@Body() dto: AuthDto) {
-        // generate password
-        const hash = await argon.hash(dto.password);
-
-        // save the user to db
-        const user = await this.prismaService.user.create({
-            data: {
-                email: dto.email,
-                hash,
-            }
-        })
-
-        // return user
-        console.log({
-            user
-        });
-        return user
+    signup(@Body() dto: AuthDto) {
+        return this.authService.signup(dto);
     }
 
-    // @Post('login')
-    // login() {
-    //     return this.authService.login();
-    // }
+    @Post('login')
+    login(@Body() dto: AuthDto) {
+        return this.authService.login(dto);
+    }
 
     // @Get('user')
     // getUser() {
