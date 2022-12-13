@@ -1,9 +1,13 @@
-import { Controller, Post } from "@nestjs/common";
+import { Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { Request } from "express";
 
-@Controller()
+@Controller("user")
 export class UserController {
-    @Post('lock')
-    lock() {
-        return "lock";
+    @UseGuards(AuthGuard("jwt"))
+    @Get("me")
+    getMe(@Req() request: Request) {
+        console.log({user: request.user});
+        return "user";
     }
 }
