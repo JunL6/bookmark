@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Req, Session, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
-import { JwtAuthGuard } from "./JwtAuthGuard";
+import { JwtAuthGuard } from "./JWTAuth.guard";
 import { Roles } from "./roles.decorator";
 import { RolesGuard } from "./roles.guard";
 
