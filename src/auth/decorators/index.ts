@@ -1,2 +1,2 @@
-export { GetUser } from './user.decorator';
+export { GetUser } from './getUser.decorator';
 export { Roles } from './roles.decorator';
