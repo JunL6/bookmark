@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Req, Session, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
+import { User } from "@prisma/client";
 import { Request } from "express";
 import { GetUser, Roles } from "src/auth/decorators";
 import { JwtAuthGuard } from "./JWTAuth.guard";
@@ -7,11 +8,15 @@ import { RolesGuard } from "./roles.guard";
 
 @Controller("user")
 export class UserController {
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles('USER')
     @Get("me")
-    getMe(@Req() request: Request, @GetUser() user) {
-        console.log({user});
+    @Roles('USER')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    getMe(@Req() request: Request,
+        @GetUser() user: User,
+        @GetUser('email') email: string,
+    ) {
+        console.log({ email })
+        console.log({ user });
         return "user";
     }
 }
