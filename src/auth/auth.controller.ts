@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseIntPipe, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, Ip, ParseIntPipe, Post, Req } from "@nestjs/common";
 import { Request } from "express";
 import { AuthDto } from "src/dto";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -18,14 +18,4 @@ export class AuthController{
     login(@Body() dto: AuthDto) {
         return this.authService.login(dto);
     }
-
-    // @Get('user')
-    // getUser() {
-    //     return "this is user.";
-    // }
-
-    // @Get('')
-    // getNone() {
-    //     return "get."
-    // }
 }
