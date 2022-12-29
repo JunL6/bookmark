@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Ip, ParseIntPipe, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get,  Ip, ParseIntPipe, Post } from "@nestjs/common";
 import { Request } from "express";
 import { AuthDto } from "src/dto";
 import { PrismaService } from "src/prisma/prisma.service";

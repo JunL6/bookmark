@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Req, Session, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
 import { User } from "@prisma/client";
 import { Request } from "express";
 import { GetUser, Roles } from "src/auth/decorators";
