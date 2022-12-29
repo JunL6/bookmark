@@ -1,19 +1,33 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { Test } from "@nestjs/testing";
+import { PrismaService } from "src/prisma/prisma.service";
+import { AppModule } from "../src/app.module";
+import { spec } from "pactum";
 
-describe('AppController (e2e)', () => {
+describe('App e2e', () => {
   let app: INestApplication;
-
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+  let prisma: PrismaService;
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule]
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleRef.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true
+    }));
+    
     await app.init();
-  });
+    await app.listen(3333);
+
+    prisma = app.get(PrismaService);
+    prisma.cleanDb();
+  })
+
+  afterAll(() => {
+    app.close();
+  })
+
 
   it('/ (GET)', () => {
     return request(app.getHttpServer())
@@ -22,3 +36,5 @@ describe('AppController (e2e)', () => {
       .expect('Hello World!');
   });
 });
+
+})
