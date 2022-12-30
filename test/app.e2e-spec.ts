@@ -139,8 +139,52 @@ describe('App e2e', () => {
   })
 
   describe("Bookmark", () => {
+    const bookmarkDto = {
+      title: "background music",
+      description: "music to listen to",
+      link: "www.youtube.com"
+    }
+    const bookmarkId = 1;
+    const secondLink = "www.spotify.com";
+    // const userId = 1;
+
     describe("Create bookmark", () => {
-      it.todo("should create bookmark")
+      it("should throw if body is not provided", async () => {
+        await spec()
+          .post(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(400)
+      })
+
+      it("should throw if title is not provided", async () => {
+        await spec()
+          .post(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody({
+            description: bookmarkDto.description,
+            link: bookmarkDto.link
+          })
+          .expectStatus(400)
+      })
+
+      it("should create bookmark", async () => {
+        await spec()
+          .post(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody(bookmarkDto)
+          .expectStatus(201)
+      })
+
+      it("should throw if a bookmark with the same title already exists", async () => {
+        await spec()
+          .post(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody({
+            title: bookmarkDto.title,
+            link: secondLink
+          })
+          .expectStatus(400)
+      })
     })
 
     describe("Edit bookmark", () => {

@@ -15,8 +15,18 @@ export class BookmarkController {
     }
 
     @Post()
-    createNewBookmark() {
-        const newBookMark = {
+    @UseGuards(JwtAuthGuard)    
+    createBookmark(@GetUser('id') userId, @Body() bookmarkDto: BookmarkDto) {
+        if (!bookmarkDto.title || !bookmarkDto.link) {
+            throw new HttpException('title and link are required', HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            return this.bookmarkService.createBookmark(userId, bookmarkDto);
+        } catch (error) {
+            throw new HttpException('A bookmark with this title already exists', HttpStatus.BAD_REQUEST)
+        } 
+    }
 
             url: "www." + Math.random() + ".com",
             name: "No." + (Math.random() * 10)
