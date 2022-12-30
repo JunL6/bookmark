@@ -28,10 +28,15 @@ export class BookmarkController {
         } 
     }
 
-            url: "www." + Math.random() + ".com",
-            name: "No." + (Math.random() * 10)
+    @Patch()
+    @UseGuards(JwtAuthGuard)    
+    editBookmark(@GetUser('id') userId, @Body() bookmark: {bookmarkId: number, bookmarkDto: BookmarkDto}) {
+        if (!bookmark.bookmarkDto || !bookmark?.bookmarkDto?.title || !bookmark?.bookmarkDto?.link) {
+            throw new HttpException('title and link are required', HttpStatus.BAD_REQUEST);
         }
-        this.bookmarks.push(newBookMark)
-        return newBookMark;
+
+        return this.bookmarkService.editBookmark(bookmark.bookmarkId, bookmark.bookmarkDto, userId);
+    }
+
     }
 }  

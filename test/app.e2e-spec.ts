@@ -188,11 +188,36 @@ describe('App e2e', () => {
     })
 
     describe("Edit bookmark", () => {
-      it.todo("should edit bookmark")
+      it("should throw if body is not provided", async () => {
+        await spec()
+          .patch(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(400)
+      })
+
+      it("should throw if title is not provided", async () => {
+        await spec()
+          .patch(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody({
+            description: bookmarkDto.description,
+            link: bookmarkDto.link
+          })
+          .expectStatus(400)
     })
 
-    describe("Delete bookmark", () => {
-      it.todo("should delete bookmark")
+      it.todo("should if the bookmark of this bookmarkId doesn't belong to current user");
+
+      it("should edit bookmark", async () => {
+        await spec()
+          .patch(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody({
+            bookmarkId,
+            bookmarkDto
+          })
+          .expectStatus(200)
+      })
     })
 
     describe("Get bookmarks", () => {

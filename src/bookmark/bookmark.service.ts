@@ -33,5 +33,26 @@ export class BookmarkService {
         return bookmark;
     }
 
+    async editBookmark(bookmarkId: number, bookmarkDto: BookmarkDto, userId: number) {
+        const user: UserWithBookmarks = await this.prismaService.user.findFirst({
+            where: { id: userId },
+            include: { bookmarks: true }
+        })
+
+        if(!user.bookmarks.find(bookmark => bookmark.id === bookmarkId)) 
+            throw new Error('This bookmark does not belong to this user');
+        
+        const bookmark: Bookmark = await this.prismaService.bookmark.update({
+            where: { id: bookmarkId },
+            data: {
+                title: bookmarkDto.title,
+                description: bookmarkDto.description,
+                link: bookmarkDto.link,
+            }
+        })
+
+        
+        return bookmark;
+    }
     
 }
