@@ -119,7 +119,22 @@ describe('App e2e', () => {
     })
 
     describe("Edit user", () => {
-      it.todo("should edit user")
+      it('should throw if body is not provided', async () => {
+        await spec()
+          .patch(`${LOCAL_HOST}/user`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(400)
+      })
+
+      it('should edit user', async () => {
+        await spec()
+          .patch(`${LOCAL_HOST}/user`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody({
+            firstName: 'Goku'
+          })
+          .expectStatus(200)
+      })
     })
   })
 
