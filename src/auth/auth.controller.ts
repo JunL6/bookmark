@@ -1,6 +1,6 @@
 import { Body, Controller, Get,  Ip, ParseIntPipe, Post } from "@nestjs/common";
 import { Request } from "express";
-import { AuthDto } from "src/dto";
+import { AuthDto } from "src/auth/dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { AuthService } from "./auth.service";
 
