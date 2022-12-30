@@ -54,5 +54,44 @@ export class BookmarkService {
         
         return bookmark;
     }
+
+    async getBookmarksByUserId(userId: number) {
+        const user: UserWithBookmarks = await this.prismaService.user.findFirst({
+            where: { id: userId },
+            include: { bookmarks: true }
+        })
+
+        return user.bookmarks;
+    }
+
+    async getBookmarkById(bookmarkId: number) {
+        const bookmark: Bookmark = await this.prismaService.bookmark.findFirst({
+            where: { id: bookmarkId }
+        })
+
+        return bookmark;
+    }
+
+    async deleteBookmark(bookmarkId: number, userId: number) {
+        // TODO: verify if the bookmark of this bookmarkId belongs to current user
+        // const user: UserWithBookmarks = await this.prismaService.user.findFirst({
+        //     where: { id: userId },
+        //     include: { bookmarks: true }
+        // })
+
+        // if(!user.bookmarks.find(bookmark => bookmark.id === bookmarkId)) 
+        //     throw new Error('This bookmark does not belong to this user');
+
+        const bookmark: Bookmark = await this.prismaService.bookmark.delete({
+            where: { id: bookmarkId }
+        })
+
+        return bookmark;
+    }
+
+    // TODO
+    async verifyBookmarkBelongsToUser(bookmarkId: number, userId: number) {
+
+    }
     
 }

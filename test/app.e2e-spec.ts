@@ -204,7 +204,7 @@ describe('App e2e', () => {
             link: bookmarkDto.link
           })
           .expectStatus(400)
-    })
+      })
 
       it.todo("should if the bookmark of this bookmarkId doesn't belong to current user");
 
@@ -221,11 +221,37 @@ describe('App e2e', () => {
     })
 
     describe("Get bookmarks", () => {
-      it.todo("should get bookmarks for a user")
+      it("should get all bookmarks for a user", async () => {
+        await spec()
+          .get(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(200)
+      })
+      
     })
 
     describe("Get bookmark by id", () => {
-      it.todo("should get bookmark by id")
+      it("should get one specific bookmark by bookmarkId", async () => {
+        await spec()
+          .get(`${LOCAL_HOST}/bookmark?bookmarkId=${bookmarkId}`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(200)
+      })
+    })
+
+    describe("Delete bookmark", () => {
+      it.todo("should throw if the bookmark of this bookmarkId doesn't belong to current user")
+
+      it("should delete bookmark by id", async () => {
+        await spec()
+          .delete(`${LOCAL_HOST}/bookmark?bookmarkId=${bookmarkId}`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody({
+            bookmarkId,
+            bookmarkDto
+          })
+          .expectStatus(200)
+      })
     })
   })
 

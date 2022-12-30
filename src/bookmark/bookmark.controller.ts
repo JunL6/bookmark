@@ -1,4 +1,8 @@
-import { Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { GetUser } from "src/auth/decorators";
+import { JwtAuthGuard } from "src/user/JWTAuth.guard";
+import { BookmarkService } from "./bookmark.service";
+import { BookmarkDto } from './dto'
 
 interface Bookmark {
     url: string,
@@ -7,11 +11,17 @@ interface Bookmark {
 
 @Controller('bookmark')
 export class BookmarkController {
-    private bookmarks = [];
+    constructor(private bookmarkService: BookmarkService) {}
 
     @Get()
-    getAllBookmarks() {
-        return this.bookmarks;
+    @UseGuards(JwtAuthGuard)
+    getBookmark(@Query('bookmarkId') bookmarkId: string, @GetUser('id') userId) {
+        if(!bookmarkId) {
+            return this.bookmarkService.getBookmarksByUserId(userId);
+        }
+
+        console.log("type of bookmarkId: ", typeof bookmarkId)
+        return this.bookmarkService.getBookmarkById(parseInt(bookmarkId));
     }
 
     @Post()
@@ -38,5 +48,13 @@ export class BookmarkController {
         return this.bookmarkService.editBookmark(bookmark.bookmarkId, bookmark.bookmarkDto, userId);
     }
 
+    @Delete()
+    @UseGuards(JwtAuthGuard)
+    deleteBookmark(@GetUser('id') userId, @Query('bookmarkId') bookmarkId: string) {
+        if(!bookmarkId) {
+            throw new HttpException('bookmarkId is required', HttpStatus.BAD_REQUEST);
+        }
+
+        return this.bookmarkService.deleteBookmark(parseInt(bookmarkId), userId);
     }
 }  
