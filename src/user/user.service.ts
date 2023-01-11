@@ -31,4 +31,8 @@ export class UserService {
         delete user.hash;
         return user;
     }
+
+    async getName() {
+        throw new Error('name is required');
+    }
 }

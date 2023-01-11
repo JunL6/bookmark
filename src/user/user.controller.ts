@@ -30,4 +30,13 @@ export class UserController {
 
         return this.userService.editUser(userId, editUserDto);
     }
+
+    @Get("name")   
+    async getName() {
+        try {
+            await this.userService.getName();
+        } catch (error) {
+            throw new HttpException({ message: 'name is required', cause: "blasphemy", statusCode: HttpStatus.BAD_REQUEST }, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
