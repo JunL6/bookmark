@@ -26,7 +26,7 @@ export class BookmarkController {
 
     @Post()
     @UseGuards(JwtAuthGuard)    
-    createBookmark(@GetUser('id') userId, @Body() bookmarkDto: BookmarkDto) {
+    async createBookmark(@GetUser('id') userId, @Body() bookmarkDto: BookmarkDto) {
         if (!bookmarkDto.title || !bookmarkDto.link) {
             throw new HttpException('title and link are required', HttpStatus.BAD_REQUEST);
         }
