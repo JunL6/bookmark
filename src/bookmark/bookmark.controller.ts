@@ -32,8 +32,9 @@ export class BookmarkController {
         }
 
         try {
-            return this.bookmarkService.createBookmark(userId, bookmarkDto);
+            return await this.bookmarkService.createBookmark(userId, bookmarkDto);
         } catch (error) {
+            console.log("caught the error")
             throw new HttpException('A bookmark with this title already exists', HttpStatus.BAD_REQUEST)
         } 
     }
