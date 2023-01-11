@@ -17,7 +17,7 @@ export class BookmarkController {
     @UseGuards(JwtAuthGuard)
     getBookmark(@Query('bookmarkId') bookmarkId: string, @GetUser('id') userId) {
         if(!bookmarkId) {
-            return this.bookmarkService.getBookmarksByUserId(userId);
+            return this.bookmarkService.getAllBookmarksByUserId(userId);
         }
 
         console.log("type of bookmarkId: ", typeof bookmarkId)

@@ -55,7 +55,7 @@ export class BookmarkService {
         return bookmark;
     }
 
-    async getBookmarksByUserId(userId: number) {
+    async getAllBookmarksByUserId(userId: number) {
         const user: UserWithBookmarks = await this.prismaService.user.findFirst({
             where: { id: userId },
             include: { bookmarks: true }
