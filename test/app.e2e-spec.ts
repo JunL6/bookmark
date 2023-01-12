@@ -145,6 +145,9 @@ describe('App e2e', () => {
       link: "www.youtube.com"
     }
     const bookmarkId = 1;
+    const bookmarkIdThatDoesNotBelongToThisUser = 2;
+    const bookmarkIdThatDoesNotExist = 1000;
+    const secondTitle = "Daft Punk";
     const secondLink = "www.spotify.com";
     // const userId = 1;
 
@@ -185,6 +188,17 @@ describe('App e2e', () => {
           })
           .expectStatus(400)
       })
+
+      it("should throw if a bookmark with the same link already exists", async () => {
+        await spec()
+          .post(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withBody({
+            title: secondTitle,
+            link: bookmarkDto.link
+          })
+          .expectStatus(400)
+      })
     })
 
     describe("Edit bookmark", () => {
@@ -206,15 +220,21 @@ describe('App e2e', () => {
           .expectStatus(400)
       })
 
-      it.todo("should if the bookmark of this bookmarkId doesn't belong to current user");
+      it("should throw if the bookmark of this bookmarkId doesn't belong to current user", async () => {
+        await spec()
+          .patch(`${LOCAL_HOST}/bookmark?bookmarkId=${bookmarkIdThatDoesNotBelongToThisUser}`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(400)
+      })
 
       it("should edit bookmark", async () => {
         await spec()
           .patch(`${LOCAL_HOST}/bookmark`)
           .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .withQueryParams('bookmarkId', bookmarkId)
           .withBody({
-            bookmarkId,
-            bookmarkDto
+            title: "new title",
+            link: "new link"
           })
           .expectStatus(200)
       })
@@ -240,7 +260,20 @@ describe('App e2e', () => {
     })
 
     describe("Delete bookmark", () => {
-      it.todo("should throw if the bookmark of this bookmarkId doesn't belong to current user")
+      it("should throw if the bookmark of this bookmarkId doesn't belong to current user", async () => {
+        await spec()
+          .delete(`${LOCAL_HOST}/bookmark?bookmarkId=${bookmarkIdThatDoesNotBelongToThisUser}`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(400)
+      })
+
+      it("should throw if a bookmark of this id doesn't exist", async () => {
+        await spec()
+          .delete(`${LOCAL_HOST}/bookmark`)
+          .withQueryParams('bookmarkId', bookmarkIdThatDoesNotExist)
+          .withHeaders('Authorization', `bearer $S{accessToken}`)
+          .expectStatus(400)
+      })
 
       it("should delete bookmark by id", async () => {
         await spec()
