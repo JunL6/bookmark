@@ -16,10 +16,17 @@ export class BookmarkService {
             where: { id: userId },
             include: { bookmarks: true }
         })
-
-        // TODO: how to handle errors? (who to throw errors? who to handle errors?)
-        if(user.bookmarks.find(bookmark => bookmark.title === bookmarkDto.title)) 
+        
+        if(user.bookmarks.find(bookmark => bookmark.title === bookmarkDto.title)) {
+            console.log("throws an error: a bookmark with this title already eixst")
             throw new Error('A bookmark with this title already exists');
+        }
+        
+        // verify if a bookmark of this user with the same link already exists
+        if(user.bookmarks.find(bookmark => bookmark.link === bookmarkDto.link)) {
+            console.log("throws an error: a bookmark with this link already eixst")
+            throw new Error('A bookmark with this link already exists');
+        }
 
         const bookmark = await this.prismaService.bookmark.create({
             data: {
@@ -34,13 +41,7 @@ export class BookmarkService {
     }
 
     async editBookmark(bookmarkId: number, bookmarkDto: BookmarkDto, userId: number) {
-        const user: UserWithBookmarks = await this.prismaService.user.findFirst({
-            where: { id: userId },
-            include: { bookmarks: true }
-        })
-
-        if(!user.bookmarks.find(bookmark => bookmark.id === bookmarkId)) 
-            throw new Error('This bookmark does not belong to this user');
+        await this.verifyBookmarkBelongsToUser(bookmarkId, userId)
         
         const bookmark: Bookmark = await this.prismaService.bookmark.update({
             where: { id: bookmarkId },
@@ -51,7 +52,6 @@ export class BookmarkService {
             }
         })
 
-        
         return bookmark;
     }
 
@@ -73,14 +73,8 @@ export class BookmarkService {
     }
 
     async deleteBookmark(bookmarkId: number, userId: number) {
-        // TODO: verify if the bookmark of this bookmarkId belongs to current user
-        // const user: UserWithBookmarks = await this.prismaService.user.findFirst({
-        //     where: { id: userId },
-        //     include: { bookmarks: true }
-        // })
-
-        // if(!user.bookmarks.find(bookmark => bookmark.id === bookmarkId)) 
-        //     throw new Error('This bookmark does not belong to this user');
+        // verify if the bookmark of this bookmarkId belongs to current user
+        await this.verifyBookmarkBelongsToUser(bookmarkId, userId)
 
         const bookmark: Bookmark = await this.prismaService.bookmark.delete({
             where: { id: bookmarkId }
@@ -89,9 +83,14 @@ export class BookmarkService {
         return bookmark;
     }
 
-    // TODO
     async verifyBookmarkBelongsToUser(bookmarkId: number, userId: number) {
+        const user: UserWithBookmarks = await this.prismaService.user.findFirst({
+            where: { id: userId },
+            include: { bookmarks: true }
+        })
 
+        if(!user.bookmarks.find(bookmark => bookmark.id === bookmarkId)) 
+            throw new Error('This bookmark does not belong to this user');
     }
     
 }
