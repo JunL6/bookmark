@@ -189,16 +189,16 @@ describe('App e2e', () => {
           .expectStatus(400)
       })
 
-      it("should throw if a bookmark with the same link already exists", async () => {
-        await spec()
-          .post(`${LOCAL_HOST}/bookmark`)
-          .withHeaders('Authorization', 'bearer $S{accessToken}')
-          .withBody({
-            title: secondTitle,
-            link: bookmarkDto.link
-          })
-          .expectStatus(400)
-      })
+      // it("should throw if a bookmark with the same link already exists", async () => {
+      //   await spec()
+      //     .post(`${LOCAL_HOST}/bookmark`)
+      //     .withHeaders('Authorization', 'bearer $S{accessToken}')
+      //     .withBody({
+      //       title: secondTitle,
+      //       link: bookmarkDto.link
+      //     })
+      //     .expectStatus(400)
+      // })
     })
 
     describe("Edit bookmark", () => {

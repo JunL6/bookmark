@@ -22,11 +22,6 @@ export class BookmarkService {
             throw new Error('A bookmark with this title already exists');
         }
         
-        // verify if a bookmark of this user with the same link already exists
-        if(user.bookmarks.find(bookmark => bookmark.link === bookmarkDto.link)) {
-            console.log("throws an error: a bookmark with this link already eixst")
-            throw new Error('A bookmark with this link already exists');
-        }
 
         const bookmark = await this.prismaService.bookmark.create({
             data: {
