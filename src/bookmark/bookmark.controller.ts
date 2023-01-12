@@ -20,7 +20,6 @@ export class BookmarkController {
             return this.bookmarkService.getAllBookmarksByUserId(userId);
         }
 
-        console.log("type of bookmarkId: ", typeof bookmarkId)
         return this.bookmarkService.getBookmarkById(parseInt(bookmarkId));
     }
 
@@ -34,28 +33,37 @@ export class BookmarkController {
         try {
             return await this.bookmarkService.createBookmark(userId, bookmarkDto);
         } catch (error) {
-            console.log("caught the error")
-            throw new HttpException('A bookmark with this title already exists', HttpStatus.BAD_REQUEST)
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
         } 
     }
 
     @Patch()
     @UseGuards(JwtAuthGuard)    
-    editBookmark(@GetUser('id') userId, @Body() bookmark: {bookmarkId: number, bookmarkDto: BookmarkDto}) {
-        if (!bookmark.bookmarkDto || !bookmark?.bookmarkDto?.title || !bookmark?.bookmarkDto?.link) {
+    async editBookmark(@GetUser('id') userId, @Query('bookmarkId') bookmarkId, @Body() bookmarkDto: BookmarkDto) {
+        if (!bookmarkDto || !bookmarkDto?.title || !bookmarkDto?.link) {
             throw new HttpException('title and link are required', HttpStatus.BAD_REQUEST);
         }
+        
 
-        return this.bookmarkService.editBookmark(bookmark.bookmarkId, bookmark.bookmarkDto, userId);
+        try {
+            return await this.bookmarkService.editBookmark(parseInt(bookmarkId), bookmarkDto, userId);
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+        }
     }
 
     @Delete()
     @UseGuards(JwtAuthGuard)
-    deleteBookmark(@GetUser('id') userId, @Query('bookmarkId') bookmarkId: string) {
+    async deleteBookmark(@GetUser('id') userId, @Query('bookmarkId') bookmarkId: string) {
         if(!bookmarkId) {
             throw new HttpException('bookmarkId is required', HttpStatus.BAD_REQUEST);
         }
 
-        return this.bookmarkService.deleteBookmark(parseInt(bookmarkId), userId);
+        try {
+            return await this.bookmarkService.deleteBookmark(parseInt(bookmarkId), userId);
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+        }
+
     }
 }  
