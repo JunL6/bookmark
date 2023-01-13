@@ -176,6 +176,7 @@ describe('App e2e', () => {
           .withHeaders('Authorization', 'bearer $S{accessToken}')
           .withBody(bookmarkDto)
           .expectStatus(201)
+          .stores('bookmarkId', 'id')
       })
 
       it("should throw if a bookmark with the same title already exists", async () => {
@@ -231,10 +232,10 @@ describe('App e2e', () => {
         await spec()
           .patch(`${LOCAL_HOST}/bookmark`)
           .withHeaders('Authorization', 'bearer $S{accessToken}')
-          .withQueryParams('bookmarkId', bookmarkId)
+          .withQueryParams('bookmarkId', `$S{bookmarkId}`)
           .withBody({
-            title: "new title",
-            link: "new link"
+            title: secondTitle,
+            link: secondLink
           })
           .expectStatus(200)
       })
@@ -246,6 +247,9 @@ describe('App e2e', () => {
           .get(`${LOCAL_HOST}/bookmark`)
           .withHeaders('Authorization', 'bearer $S{accessToken}')
           .expectStatus(200)
+          .expectJsonLength(1)
+          .expectBodyContains(secondTitle)
+          .expectBodyContains(secondLink)
       })
       
     })
@@ -253,7 +257,7 @@ describe('App e2e', () => {
     describe("Get bookmark by id", () => {
       it("should get one specific bookmark by bookmarkId", async () => {
         await spec()
-          .get(`${LOCAL_HOST}/bookmark?bookmarkId=${bookmarkId}`)
+          .get(`${LOCAL_HOST}/bookmark/$S{bookmarkId}`)
           .withHeaders('Authorization', 'bearer $S{accessToken}')
           .expectStatus(200)
       })
@@ -277,13 +281,22 @@ describe('App e2e', () => {
 
       it("should delete bookmark by id", async () => {
         await spec()
-          .delete(`${LOCAL_HOST}/bookmark?bookmarkId=${bookmarkId}`)
+          .delete(`${LOCAL_HOST}/bookmark`)
+          .withQueryParams('bookmarkId', `$S{bookmarkId}`)
           .withHeaders('Authorization', 'bearer $S{accessToken}')
           .withBody({
             bookmarkId,
             bookmarkDto
           })
           .expectStatus(200)
+      })
+
+      it("should return empty list of bookmarks", async () => {
+        await spec()
+          .get(`${LOCAL_HOST}/bookmark`)
+          .withHeaders('Authorization', 'bearer $S{accessToken}')
+          .expectStatus(200)
+          .expectJsonLength(0)
       })
     })
   })
