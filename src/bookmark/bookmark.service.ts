@@ -35,7 +35,7 @@ export class BookmarkService {
         return bookmark;
     }
 
-    async editBookmark(bookmarkId: number, bookmarkDto: BookmarkDto, userId: number) {
+    async editBookmarkById(bookmarkId: number, bookmarkDto: BookmarkDto, userId: number) {
         await this.verifyBookmarkBelongsToUser(bookmarkId, userId)
         
         const bookmark: Bookmark = await this.prismaService.bookmark.update({
@@ -67,7 +67,7 @@ export class BookmarkService {
         return bookmark;
     }
 
-    async deleteBookmark(bookmarkId: number, userId: number) {
+    async deleteBookmarkById(bookmarkId: number, userId: number) {
         // verify if the bookmark of this bookmarkId belongs to current user
         await this.verifyBookmarkBelongsToUser(bookmarkId, userId)
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { GetUser } from "src/auth/decorators";
 import { JwtAuthGuard } from "src/user/JWTAuth.guard";
 import { BookmarkService } from "./bookmark.service";
@@ -15,7 +15,14 @@ export class BookmarkController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    getBookmark(@Query('bookmarkId') bookmarkId: string, @GetUser('id') userId) {
+    getBookmarks(@GetUser('id') userId) {
+        return this.bookmarkService.getAllBookmarksByUserId(userId);
+
+    }
+
+    @Get(':bookmarkId')
+    @UseGuards(JwtAuthGuard)
+    getBookmarkById(@Param('bookmarkId') bookmarkId: string, @GetUser('id') userId) {
         if(!bookmarkId) {
             return this.bookmarkService.getAllBookmarksByUserId(userId);
         }
@@ -39,14 +46,13 @@ export class BookmarkController {
 
     @Patch()
     @UseGuards(JwtAuthGuard)    
-    async editBookmark(@GetUser('id') userId, @Query('bookmarkId') bookmarkId, @Body() bookmarkDto: BookmarkDto) {
+    async editBookmarkById(@GetUser('id') userId, @Query('bookmarkId') bookmarkId, @Body() bookmarkDto: BookmarkDto) {
         if (!bookmarkDto || !bookmarkDto?.title || !bookmarkDto?.link) {
             throw new HttpException('title and link are required', HttpStatus.BAD_REQUEST);
         }
         
-
         try {
-            return await this.bookmarkService.editBookmark(parseInt(bookmarkId), bookmarkDto, userId);
+            return await this.bookmarkService.editBookmarkById(parseInt(bookmarkId), bookmarkDto, userId);
         } catch (error) {
             throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
         }
@@ -54,13 +60,13 @@ export class BookmarkController {
 
     @Delete()
     @UseGuards(JwtAuthGuard)
-    async deleteBookmark(@GetUser('id') userId, @Query('bookmarkId') bookmarkId: string) {
+    async deleteBookmarkById(@GetUser('id') userId, @Query('bookmarkId') bookmarkId: string) {
         if(!bookmarkId) {
             throw new HttpException('bookmarkId is required', HttpStatus.BAD_REQUEST);
         }
 
         try {
-            return await this.bookmarkService.deleteBookmark(parseInt(bookmarkId), userId);
+            return await this.bookmarkService.deleteBookmarkById(parseInt(bookmarkId), userId);
         } catch (error) {
             throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }
