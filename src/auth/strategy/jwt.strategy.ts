@@ -23,14 +23,11 @@ export class JWTStrategy extends PassportStrategy(
     }
 
     async validate(payload: any) {
-        console.log({payload});
+        // console.log({payload});
         const user = await this.userService.findUserById(payload.sub);
         if(!user) return false;
 
         delete user.hash;
         return user;
-
-        // console.log(new Date().getTime() / 1000);
-        // return payload;
     }
 }
